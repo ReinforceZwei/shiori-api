@@ -4,7 +4,7 @@ let schema = `
 CREATE TABLE IF NOT EXISTS "bookmark" (
     "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
     "user_id" integer NOT NULL,
-    "order_id" integer NOT NULL,
+    "order_id" real NOT NULL,
     "name" text NOT NULL,
     "url" text NOT NULL,
     "add_time" integer NOT NULL,
@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS "bookmark" (
   CREATE TABLE IF NOT EXISTS "collection" (
     "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
     "user_id" integer NOT NULL,
+    "order_id" real NOT NULL,
     "name" text NOT NULL,
     FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
   );
