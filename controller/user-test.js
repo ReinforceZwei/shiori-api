@@ -3,10 +3,10 @@ fs.unlinkSync('testdb.db')
 require('../database/init').init('testdb.db')
 var user = require('./user')
 
-Promise.all([
-    user.addUser('testacc', '12345678'),
-    user.addUser('reinforce', 'abc'),
-])
+user.addUser('testacc', '12345678')
+.then(() => {
+    return user.addUser('reinforce', 'abc')
+})
 .then(()=>{
     return user.dumpUsers()
 })
@@ -28,6 +28,14 @@ Promise.all([
 })
 .then(() => {
     return user.dumpSession()
+})
+.then(() => {
+    return user.loginUser('reinforce', 'abc')
+})
+.then(async token => {
+    await user.dumpSession()
+    await user.logoutUser(token)
+    return user.verifyUser(token)
 })
 .catch(err => {
     console.error(err)

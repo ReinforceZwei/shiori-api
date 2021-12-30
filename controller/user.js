@@ -124,6 +124,11 @@ function verifyUser(token) {
     })
 }
 
+function logoutUser(token) {
+    loggedUser.delete(token)
+    return Promise.resolve()
+}
+
 function dumpUsers(){
     return new Promise((resolve, reject) => {
         db.all("SELECT * FROM user", [], (err, rows) => {
@@ -141,4 +146,4 @@ function dumpSession(){
     console.log(loggedUser)
 }
 
-module.exports = {addUser, getUser, deleteUser, loginUser, verifyUser, dumpUsers, dumpSession}
+module.exports = {addUser, getUser, getUserInfo, deleteUser, loginUser, verifyUser, logoutUser, dumpUsers, dumpSession}
