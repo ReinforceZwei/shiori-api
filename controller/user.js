@@ -10,74 +10,49 @@ const TOKEN_LENGTH = 48
 var loggedUser = new Map();
 
 function addUser(name, password) {
-    return new Promise((resolve, reject) => {
-        return bcrypt.hash(password, 10)
-            .then(hashed => {
-                let sql = "INSERT INTO user (name, password) VALUES (?, ?)"
-                db.run(sql, [name, hashed], (err) => {
-                    if (err){
-                        reject(err)
-                    }else{
-                        resolve()
-                    }
-                })
-            })
-    })
+    return bcrypt.hash(password, 10)
+        .then(hashed => {
+            let sql = "INSERT INTO user (name, password) VALUES (?, ?)"
+            return db.query(sql, [name, hashed])
+        })
 }
 
 function getUser(userId) {
-    return new Promise((resolve, reject) => {
-        let sql = 'SELECT * FROM user WHERE id = ?'
-        db.get(sql, [userId], (err, row) => {
-            if (err){
-                reject(err)
-            }else{
-                resolve(row)
-            }
-        })
-    })
+    let sql = 'SELECT * FROM user WHERE id = ?'
+    return db.query(sql, [userId])
 }
 
 // Private use only
 function getUserInfo(name) {
-    return new Promise((resolve, reject) => {
-        let sql = 'SELECT * FROM user WHERE name = ?'
-        db.get(sql, name, (err, row) => {
-            if (err) {
-                reject(err)
-            } else {
-                resolve(row)
-            }
-        })
-    })
+    let sql = 'SELECT * FROM user WHERE name = ?'
+    return db.query(sql, name)
 }
 
 function deleteUser(userId, password) {
-    return new Promise((resolve, reject) => {
-        getUser(userId)
-            .then(user => {
-                return bcrypt.compare(password, user.password)
-            })
-            .then(result => {
-                if (result) {
-                    let sql = "DELETE FROM user WHERE id = ?"
-                    db.run(sql, userId, (err) => {
-                        if (err){
-                            reject(err)
-                        }else{
-                            loggedUser.forEach((value, key) => {
-                                if (value.id === userId){
-                                    loggedUser.delete(key)
-                                }
-                            })
-                            resolve()
-                        }
+    return getUser(userId)
+        .then(user => {
+            if (user.length === 1){
+                return bcrypt.compare(password, user[0].password)
+            }else{
+                return Promise.reject('User does not exist')
+            }
+        })
+        .then(result => {
+            if (result) {
+                let sql = "DELETE FROM user WHERE id = ?"
+                return db.query(sql, userId)
+                    .then(() => {
+                        loggedUser.forEach((value, key) => {
+                            if (value.id === userId){
+                                loggedUser.delete(key)
+                            }
+                        })
                     })
-                }else{
-                    reject('Invalid password')
-                }
-            })
-    })
+            }else{
+                return Promise.reject('Invalid password')
+            }
+        })
+    
 }
 
 function loginUser(name, password) {
@@ -85,10 +60,11 @@ function loginUser(name, password) {
         // Get user info from db
         return getUserInfo(name)
             .then(async value => {
-                if (value !== undefined){
+                if (value.length === 1){
+                    let user = value[0]
                     // Return promise
-                    let compareResult = await bcrypt.compare(password, value.password)
-                    return {compare: compareResult, user: value}
+                    let compareResult = await bcrypt.compare(password, user.password)
+                    return {compare: compareResult, user: user}
                 }else{
                     return Promise.reject('Invalid user' + name)
                 }
@@ -130,20 +106,19 @@ function logoutUser(token) {
 }
 
 function dumpUsers(){
-    return new Promise((resolve, reject) => {
-        db.all("SELECT * FROM user", [], (err, rows) => {
-            if (err){
-                reject(err)
-            }else{
-                console.log(rows)
-                resolve(rows)
-            }
+    return db.query("SELECT * FROM user", [])
+        .then((rows) => {
+            console.log(rows)
+            return rows
         })
-    })
+        .catch(err => {
+            console.error(err)
+        })
 }
 
 function dumpSession(){
     console.log(loggedUser)
+    return Promise.resolve(loggedUser)
 }
 
 module.exports = {addUser, getUser, getUserInfo, deleteUser, loginUser, verifyUser, logoutUser, dumpUsers, dumpSession}

@@ -11,10 +11,10 @@ var config = require('./config/config')({'port': 3001})
 
 console.log(config)
 
-var db = require('./database/init').init(config.sqlite_file)
+var db = require('./database/init').init('sqlite', config.sqlite_file)
 
 //db.run("INSERT INTO user (name, password) VALUES ('admin', 'abc123')");
-db.all("SELECT * FROM user", (err, rows) => {console.log(rows)})
+//db.all("SELECT * FROM user", (err, rows) => {console.log(rows)})
 
 var index = require('./router/index')
 app.use('/', index)
