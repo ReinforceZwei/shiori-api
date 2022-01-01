@@ -3,7 +3,6 @@ var user = require(__dirname + "/../controller/user")
 module.exports = (req, res, next) => {
     if (req.headers.authorization){
         let value = req.headers.authorization
-        console.log(value)
         if (value.startsWith('bearer ')){
             value = value.replace('bearer ', '')
             user.verifyUser(value)
