@@ -73,9 +73,12 @@ function loginUser(name, password) {
                 if (result.compare){
                     // Generate user token
                     let token = crypto.randomBytes(TOKEN_LENGTH).toString('base64');
-                    let not_after = (3 * 24 * 3600 * 1000 + Date.now()) // 3 days
-                    loggedUser.set(token, {'name': result.user.name, 'id': result.user.id, 'not_after': not_after})
-                    return token
+                    let not_after = (new Date(3 * 24 * 3600 * 1000 + new Date().getTime()).toISOString()) // 3 days
+                    let sql = "INSERT INTO session (user_id, token, not_after) VALUES (?, ?, ?)"
+                    return db.query(sql, [result.user.id, token, not_after])
+                        .then(() => {
+                            return token
+                        })
                 }else{
                     return Promise.reject('Invalid password')
                 }
@@ -86,23 +89,29 @@ function loginUser(name, password) {
 }
 
 function verifyUser(token) {
-    return new Promise((resolve, reject) => {
-        loggedUser.forEach((value, key) => {
-            if (value.not_after < Date.now()){
-                loggedUser.delete(key)
+    return cleanupSession()
+        .then(() => {
+            let sql = "SELECT user.* FROM session JOIN user ON session.user_id = user.id WHERE token = ?"
+            return db.query(sql, [token])
+        })
+        .then(rows => {
+            if (rows.length === 1){
+                return rows[0]
+            }else{
+                return Promise.reject('Invalid token')
             }
         })
-        if (loggedUser.has(token)){
-            resolve(loggedUser.get(token))
-        }else{
-            reject('Invalid token')
-        }
-    })
+}
+
+function cleanupSession(){
+    let sql = "DELETE FROM session WHERE not_after < ?"
+    let now = new Date().toISOString()
+    return db.query(sql, [now])
 }
 
 function logoutUser(token) {
-    loggedUser.delete(token)
-    return Promise.resolve()
+    let sql = "DELETE FROM session WHERE token = ?"
+    return db.query(sql, [token])
 }
 
 function dumpUsers(){
@@ -117,8 +126,14 @@ function dumpUsers(){
 }
 
 function dumpSession(){
-    console.log(loggedUser)
-    return Promise.resolve(loggedUser)
+    return db.query("SELECT * FROM session", [])
+        .then((rows) => {
+            console.log(rows)
+            return rows
+        })
+        .catch(err => {
+            console.error(err)
+        })
 }
 
 module.exports = {addUser, getUser, getUserInfo, deleteUser, loginUser, verifyUser, logoutUser, dumpUsers, dumpSession}

@@ -36,3 +36,11 @@ CREATE TABLE IF NOT EXISTS "bookmark" (
     "name" text NOT NULL UNIQUE,
     "password" text NOT NULL
   );
+
+CREATE TABLE IF NOT EXISTS "session"(
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "user_id" INTEGER NOT NULL,
+    "token" TEXT NOT NULL UNIQUE,
+    "not_after" TEXT NOT NULL,
+    FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
+);

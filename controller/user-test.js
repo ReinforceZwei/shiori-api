@@ -25,18 +25,18 @@ var user = require('./user');
     ])
 
     let sessions = await user.dumpSession()
-    console.assert(sessions.size === 3, 'Login users, session count not match')
+    console.assert(sessions.length === 3, 'Login users, session count not match')
 
     await user.deleteUser(1, '12345678')
     users = await user.dumpUsers()
     console.assert(users.length === 1, 'Delete users, number not match')
 
     sessions = await user.dumpSession()
-    console.assert(sessions.size === 2, 'Delete users, session count not match')
+    console.assert(sessions.length === 2, 'Delete users, session count not match')
 
     let token = await user.loginUser('reinforce', 'abc')
     sessions = await user.dumpSession()
-    console.assert(sessions.size === 3, 'Login users, session count not match')
+    console.assert(sessions.length === 3, 'Login users, session count not match')
 
     let loginUser = await user.verifyUser(token)
     console.assert(loginUser.id === 2, 'Verify user, user id not match')

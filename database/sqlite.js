@@ -17,6 +17,13 @@ function init(dbFile) {
             process.exit()
         }
     });
+    db.exec('PRAGMA foreign_keys = ON', err => {
+        if (err){
+            console.error('Sqlite cannot enable foreign keys')
+            console.error(err);
+            process.exit()
+        }
+    })
     return new SqliteWrapper(db)
 }
 
