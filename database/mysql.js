@@ -1,6 +1,6 @@
 var mysql = require('mysql')
 var Warpper = require('./database-wrapper')
-var schema = require('fs').readFileSync('../database-schema/mysql.sql').toString()
+var schema = require('fs').readFileSync(__dirname + '/../database-schema/mysql.sql').toString()
 
 function init(options){
     if (options.host && options.user && options.password && options.database){

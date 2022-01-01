@@ -1,6 +1,6 @@
 var sqlite3 = require('sqlite3')
 var Warpper = require('./database-wrapper')
-var schema =  require('fs').readFileSync('../database-schema/sqlite.sql').toString()
+var schema =  require('fs').readFileSync(__dirname + '/../database-schema/sqlite.sql').toString()
 
 function init(dbFile) {
     let db = new sqlite3.Database(dbFile, (err) => {

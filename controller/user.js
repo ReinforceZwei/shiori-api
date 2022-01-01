@@ -72,7 +72,7 @@ function loginUser(name, password) {
             .then(result => {
                 if (result.compare){
                     // Generate user token
-                    let token = crypto.randomBytes(TOKEN_LENGTH).toString('hex');
+                    let token = crypto.randomBytes(TOKEN_LENGTH).toString('base64');
                     let not_after = (3 * 24 * 3600 * 1000 + Date.now()) // 3 days
                     loggedUser.set(token, {'name': result.user.name, 'id': result.user.id, 'not_after': not_after})
                     return token

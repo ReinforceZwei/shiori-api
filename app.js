@@ -13,6 +13,9 @@ console.log(config)
 
 var db = require('./database/init').init('sqlite', config.sqlite_file)
 
+// var auth = require('./middleware/authentication')
+// app.use(auth)
+
 //db.run("INSERT INTO user (name, password) VALUES ('admin', 'abc123')");
 //db.all("SELECT * FROM user", (err, rows) => {console.log(rows)})
 
@@ -21,6 +24,9 @@ app.use('/', index)
 
 var user = require('./router/user')
 app.use('/user', user)
+
+var bookmark = require('./router/bookmark')
+app.use('/bookmark', bookmark)
 
 app.listen(config.port, () => {
     console.log(`Running on port ${config.port}`)
