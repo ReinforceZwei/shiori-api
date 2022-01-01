@@ -29,4 +29,4 @@ CREATE TABLE IF NOT EXISTS `bookmark_collection`(
     FOREIGN KEY(`bookmark_id`) REFERENCES `bookmark`(`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 );
 CREATE UNIQUE INDEX IF NOT EXISTS `bookmark_collection_bookmark_id_collection_id` ON
-    `bookmark_collection`(`bookmark_id`, `collection_id`);
+    `bookmark_collection`(`bookmark_id`);

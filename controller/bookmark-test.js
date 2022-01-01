@@ -1,14 +1,14 @@
-// let fs = require('fs')
-// if (fs.existsSync('testdb.db')) {fs.unlinkSync('testdb.db')}
-// require('../database/init').init('sqlite', 'testdb.db')
+let fs = require('fs')
+if (fs.existsSync('testdb.db')) {fs.unlinkSync('testdb.db')}
+require('../database/init').init('sqlite', 'testdb.db')
 
-let mysqlConfig = {
-    host     : 'localhost',
-    user     : 'user',
-    password : '-',
-    database : 'shiori'
-};
-require('../database/init').init('mysql', mysqlConfig);
+// let mysqlConfig = {
+//     host     : 'localhost',
+//     user     : 'user',
+//     password : '-',
+//     database : 'shiori'
+// };
+// require('../database/init').init('mysql', mysqlConfig);
 
 var user = require('./user')
 var bm = require('./bookmark');

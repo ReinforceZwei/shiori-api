@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS "bookmark" (
     FOREIGN KEY ("bookmark_id") REFERENCES "bookmark" ("id") ON DELETE CASCADE ON UPDATE NO ACTION
   );
   
-  CREATE UNIQUE INDEX IF NOT EXISTS "bookmark_collection_bookmark_id_collection_id" ON "bookmark_collection" ("bookmark_id", "collection_id");
+  CREATE UNIQUE INDEX IF NOT EXISTS "bookmark_collection_bookmark_id_collection_id" ON "bookmark_collection" ("bookmark_id");
   
   
   CREATE TABLE IF NOT EXISTS "collection" (
