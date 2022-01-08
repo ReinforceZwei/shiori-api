@@ -1,14 +1,14 @@
-let fs = require('fs')
-if (fs.existsSync('testdb.db')) {fs.unlinkSync('testdb.db')}
-require('../database/init').init('sqlite', 'testdb.db')
+// let fs = require('fs')
+// if (fs.existsSync('testdb.db')) {fs.unlinkSync('testdb.db')}
+// require('../database/init').init('sqlite', 'testdb.db')
 
-// let mysqlConfig = {
-//     host     : 'localhost',
-//     user     : 'user',
-//     password : '-',
-//     database : 'shiori'
-// };
-// require('../database/init').init('mysql', mysqlConfig);
+let mysqlConfig = {
+    host     : 'localhost',
+    user     : 'testacc',
+    password : '-',
+    database : 'shiori'
+};
+require('../database/init').init('mysql', mysqlConfig);
 
 var user = require('./user')
 var cl = require('./collection');
@@ -35,4 +35,13 @@ var bm = require('./bookmark');
     await bl.removeFromCollection(me.id, bm_id1)
     cl1_item = await bl.getCollectionItem(me.id, cl_id1)
     console.log(cl1_item)
+
+    await bm.addBookmark(me.id, 'order 1', 'localhost')
+    let insert_id = await bm.addBookmark(me.id, 'order 2', 'localhost')
+    await bm.addBookmark(me.id, 'order 3', 'localhost')
+    await bm.addBookmark(me.id, 'order 4', 'localhost')
+    await bm.addBookmark(me.id, 'order 5', 'localhost')
+    let after_id = await bm.addBookmark(me.id, 'order 6', 'localhost')
+
+    await bl.insertAfter(me.id, insert_id, after_id)
 })()
