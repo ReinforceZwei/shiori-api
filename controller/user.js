@@ -4,11 +4,6 @@ var crypto = require('crypto');
 
 const TOKEN_LENGTH = 48
 
-// Store user token in memory
-// token => [tokenObj]
-// tokenObj => {userId, not_after}
-var loggedUser = new Map();
-
 function addUser(name, password) {
     return bcrypt.hash(password, 10)
         .then(hashed => {
@@ -34,20 +29,13 @@ function deleteUser(userId, password) {
             if (user.length === 1){
                 return bcrypt.compare(password, user[0].password)
             }else{
-                return Promise.reject('User does not exist')
+                return Promise.reject('User not exist')
             }
         })
         .then(result => {
             if (result) {
                 let sql = "DELETE FROM user WHERE id = ?"
                 return db.query(sql, userId)
-                    .then(() => {
-                        loggedUser.forEach((value, key) => {
-                            if (value.id === userId){
-                                loggedUser.delete(key)
-                            }
-                        })
-                    })
             }else{
                 return Promise.reject('Invalid password')
             }

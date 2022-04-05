@@ -83,3 +83,37 @@ r.get('/:id/items', (req, res) => {
             })
     }
 })
+
+r.get('/none/items', (req, res) => {
+    bookmarkCollection.getItemNotInCollection(req.userId)
+        .then(rows => {
+            res.json({'data': rows})
+        })
+        .catch(err => {
+            res.json({'error': err})
+        })
+})
+
+r.post('/:id/add', (req, res) => {
+    if (req.params.id && res.body.bookmark_id) {
+        // Add bookmark to collection
+    }
+})
+
+r.post('/:id/remove', (req, res) => {
+    if (req.params.id && res.body.bookmark_id) {
+        // Remove bookmark from collection
+    }
+})
+
+r.post('/:id/insert/after', (req, res) => {
+    if (req.body.bookmark_id && req.body.after_bookmark) {
+        // Reorder bookmark
+    }
+})
+
+r.post('/none/insert/after', (req, res) => {
+    if (req.body.bookmark_id && req.body.after_bookmark) {
+        // Reorder bookmark
+    }
+})

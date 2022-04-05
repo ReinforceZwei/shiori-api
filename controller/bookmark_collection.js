@@ -43,7 +43,7 @@ function insert(position, userId, bookmarkId, afterId, collectionId) {
     .then(rows => {
         if (rows.length === 1){
             orderIdLow = rows[0].order_id
-            if (collectionId === undefined){
+            if (collectionId === undefined || collectionId === 0){
                 return getItemNotInCollection(userId)
             }else{
                 return getCollectionItem(userId, collectionId)
@@ -84,4 +84,4 @@ function insert(position, userId, bookmarkId, afterId, collectionId) {
     })
 }
 
-module.exports = {addToCollection, removeFromCollection, getCollectionItem, insertAfter, insertBefore}
+module.exports = {addToCollection, removeFromCollection, getCollectionItem, insertAfter, insertBefore, getItemNotInCollection}

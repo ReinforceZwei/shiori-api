@@ -53,6 +53,8 @@ class MySqlWrapper extends Warpper {
         return new Promise((resolve, reject) => {
             this._db.query(sql, params, (err, rows, fields) => {
                 if (err){
+                    console.error("Error while executing SQL:", sql, params)
+                    console.error(err)
                     reject(err)
                 }else{
                     resolve(rows)

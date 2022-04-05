@@ -1,4 +1,5 @@
 var user = require(__dirname + "/../controller/user")
+var fail = require(__dirname + "/../helper/responsehelper").fail
 
 module.exports = (req, res, next) => {
     if (req.headers.authorization){
@@ -11,10 +12,10 @@ module.exports = (req, res, next) => {
                 next()
             })
             .catch(err => {
-                res.json({'msg': 'Not authorized'}).status(401)
+                fail(res, 401, 'Not authorized')
             })
         }
     } else {
-        res.json({'msg': 'Not authorized'}).status(401)
+        fail(res, 401, 'Not authorized')
     }
 }

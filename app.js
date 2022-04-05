@@ -1,5 +1,6 @@
 var express = require('express');
 var helmet = require('helmet')
+var fail = require(__dirname + "/helper/responsehelper").fail
 
 var app = express()
 app.use(helmet())
@@ -27,6 +28,17 @@ app.use('/user', user)
 
 var bookmark = require('./router/bookmark')
 app.use('/bookmark', bookmark)
+
+// Not found handler
+app.use(function(req, res, next) {
+    fail(res, 404, "Not Found")
+});
+
+// Error handler
+app.use(function(err, req, res, next) {
+    console.error(err)
+    fail(res, 500, "Cannot handle request")
+});
 
 app.listen(config.port, () => {
     console.log(`Running on port ${config.port}`)
