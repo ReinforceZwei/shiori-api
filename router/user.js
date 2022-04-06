@@ -1,47 +1,52 @@
 var express = require('express');
 var r = express.Router();
 var user = require('../controller/user')
+var resp = require(__dirname + "/../helper/resp")
+var notEmpty = require('../helper/haskey').notEmpty
 
 r.post('/login', (req, res) => {
-    if (typeof req.body.name === 'string' && typeof req.body.password === 'string'){
+    if (notEmpty(req.body, 'name') && notEmpty(req.body, 'password')){
         let name = req.body.name
         let password = req.body.password
         user.loginUser(name, password)
-            .then(token => {
-                res.json({'token': token})
+            .then(tokenInfo => {
+                resp.ok(res, tokenInfo)
             })
             .catch((err) => {
-                res.json({'error': err}).status(401)
+                resp.fail(res, 401, err)
             })
     }else{
-        res.status(400).json({'error': 'Missing parameters'})
+        resp.fail(res, 400, 'Missing parameters')
     }
 })
 
 r.post('/logout', (req, res) => {
-    if (req.headers.authorization){
+    if (notEmpty(req.headers.authorization)){
         user.logoutUser(req.headers.authorization)
             .then(() => {
-                res.json({'msg': 'ok'})
+                resp.ok(res)
+            })
+            .catch(err => {
+                resp.fail(res, 500, err)
             })
     }else{
-        res.json({'error': 'Unauthorized'}).status(401)
+        resp.fail(res, 401, "Unauthorized")
     }
 })
 
 r.post('/create', (req, res) => {
-    if (typeof req.body.name === 'string' && typeof req.body.password === 'string'){
+    if (notEmpty(req.body, 'name') && notEmpty(req.body, 'password')){
         let name = req.body.name
         let password = req.body.password
         user.addUser(name, password)
         .then(() => {
-            res.json({'msg': 'ok'})
+            resp.ok(res)
         })
         .catch(err => {
-            res.json({'error': err}).status(400)
+            resp.fail(res, 400, err)
         })
     }else{
-        res.status(400).json({'error': 'Missing parameters'})
+        resp.fail(res, 400, 'Missing parameters')
     }
 })
 

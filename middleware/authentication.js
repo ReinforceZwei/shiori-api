@@ -1,5 +1,5 @@
 var user = require(__dirname + "/../controller/user")
-var fail = require(__dirname + "/../helper/responsehelper").fail
+var fail = require(__dirname + "/../helper/resp").fail
 
 module.exports = (req, res, next) => {
     if (req.headers.authorization){

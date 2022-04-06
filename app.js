@@ -1,6 +1,6 @@
 var express = require('express');
 var helmet = require('helmet')
-var fail = require(__dirname + "/helper/responsehelper").fail
+var fail = require(__dirname + "/helper/resp").fail
 
 var app = express()
 app.use(helmet())

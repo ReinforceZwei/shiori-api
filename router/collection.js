@@ -3,11 +3,13 @@ var r = express.Router();
 var collection = require('../controller/collection')
 var bookmarkCollection = require('../controller/bookmark_collection')
 var auth = require('../middleware/authentication')
+var resp = require("../helper/resp")
+var notEmpty = require('../helper/haskey').notEmpty
 
 r.use(auth)
 
 r.post('/create', (req, res) => {
-    if (req.body.name){
+    if (notEmpty(req.body, 'name')){
         let name = req.body.name
         collection.createCollection(req.userId, name)
             .then(id => {
@@ -16,6 +18,8 @@ r.post('/create', (req, res) => {
             .catch(err => {
                 res.json({'error': err})
             })
+    }else{
+        resp.fail(res, 400, 'Missing parameters')
     }
 })
 
@@ -30,7 +34,7 @@ r.get('/list', (req, res) => {
 })
 
 r.get('/:id', (req, res) => {
-    if (req.params.id){
+    if (notEmpty(req.params, 'id')){
         collection.getCollection(req.userId, req.params.id)
             .then(rows => {
                 if (rows.length === 1){
@@ -42,11 +46,13 @@ r.get('/:id', (req, res) => {
             .catch(err => {
                 res.json({'error': err})
             })
+    }else{
+        resp.fail(res, 400, 'Missing parameters')
     }
 })
 
 r.delete('/:id', (req, res) => {
-    if (req.params.id){
+    if (notEmpty(req.params, 'id')){
         let id = req.params.id
         collection.deleteCollection(req.userId, id)
             .then(rows => {
@@ -55,11 +61,13 @@ r.delete('/:id', (req, res) => {
             .catch(err => {
                 res.json({'error': err})
             })
+    }else{
+        resp.fail(res, 400, 'Missing parameters')
     }
 })
 
 r.patch('/:id', (req, res) => {
-    if (req.body.name && req.params.id){
+    if (notEmpty(req.body, 'name') && notEmpty(req.params, 'id')){
         let name = req.body.name
         let id = req.params.id
         collection.updateCollection(req.userId, id, name)
@@ -69,6 +77,8 @@ r.patch('/:id', (req, res) => {
             .catch(err => {
                 res.json({'error': err})
             })
+    }else{
+        resp.fail(res, 400, 'Missing parameters')
     }
 })
 
@@ -83,7 +93,7 @@ r.get('/none/items', (req, res) => {
 })
 
 r.get('/:id/items', (req, res) => {
-    if (req.params.id){
+    if (notEmpty(req.params, 'id')){
         bookmarkCollection.getCollectionItem(req.userId, req.params.id)
             .then(rows => {
                 res.json({'data': rows})
@@ -91,11 +101,13 @@ r.get('/:id/items', (req, res) => {
             .catch(err => {
                 res.json({'error': err})
             })
+    }else{
+        resp.fail(res, 400, 'Missing parameters')
     }
 })
 
 r.post('/:id/add', (req, res) => {
-    if (req.params.id && req.body.bookmark_id) {
+    if (notEmpty(req.params, 'id') && notEmpty(req.body, 'bookmark_id')) {
         // Add bookmark to collection
         let bookmarkId = req.body.bookmark_id
         let collectionId = req.params.id
@@ -106,11 +118,13 @@ r.post('/:id/add', (req, res) => {
             .catch(err => {
                 res.json({'error': err})
             })
+    }else{
+        resp.fail(res, 400, 'Missing parameters')
     }
 })
 
 r.post('/:id/remove', (req, res) => {
-    if (req.params.id && req.body.bookmark_id) {
+    if (notEmpty(req.params, 'id') && notEmpty(req.body, 'bookmark_id')) {
         // Remove bookmark from collection
         let bookmarkId = req.body.bookmark_id
         let collectionId = req.params.id
@@ -121,11 +135,13 @@ r.post('/:id/remove', (req, res) => {
             .catch(err => {
                 res.json({'error': err})
             })
+    }else{
+        resp.fail(res, 400, 'Missing parameters')
     }
 })
 
 r.post('/none/insert/after', (req, res) => {
-    if (req.body.hasOwnProperty('bookmark_id') && req.body.hasOwnProperty('after_bookmark')) {
+    if (notEmpty(req.body, 'bookmark_id') && notEmpty(req.body, 'after_bookmark')) {
         // Reorder bookmark
         let bookmarkId = req.body.bookmark_id
         let afterbookmark = req.body.after_bookmark
@@ -136,11 +152,13 @@ r.post('/none/insert/after', (req, res) => {
             .catch(err => {
                 res.json({'error': err})
             })
+    }else{
+        resp.fail(res, 400, 'Missing parameters')
     }
 })
 
 r.post('/:id/insert/after', (req, res) => {
-    if (req.body.hasOwnProperty('bookmark_id') && req.body.hasOwnProperty('after_bookmark')) {
+    if (notEmpty(req.body, 'bookmark_id') && notEmpty(req.body, 'after_bookmark')) {
         // Reorder bookmark
         let collectionId = req.params.id
         let bookmarkId = req.body.bookmark_id
@@ -152,6 +170,8 @@ r.post('/:id/insert/after', (req, res) => {
             .catch(err => {
                 res.json({'error': err})
             })
+    }else{
+        resp.fail(res, 400, 'Missing parameters')
     }
 })
 

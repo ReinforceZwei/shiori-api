@@ -65,7 +65,7 @@ function loginUser(name, password) {
                     let sql = "INSERT INTO session (user_id, token, not_after) VALUES (?, ?, ?)"
                     return db.query(sql, [result.user.id, token, not_after])
                         .then(() => {
-                            return token
+                            return {token: token, not_after: not_after}
                         })
                 }else{
                     return Promise.reject('Invalid password')
