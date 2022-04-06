@@ -16,7 +16,7 @@ function getCollectionItem(userId, collectionId){
 }
 
 function getItemNotInCollection(userId){
-    let sql = 'SELECT * FROM bookmark WHERE NOT EXISTS (SELECT NULL FROM bookmark_collection WHERE bookmark_collection.bookmark_id = bookmark.id) AND user_id = ? ORDER BY order_id'
+    let sql = 'SELECT * FROM bookmark WHERE NOT EXISTS (SELECT * FROM bookmark_collection WHERE bookmark_collection.bookmark_id = bookmark.id) AND user_id = ? ORDER BY order_id'
     return db.query(sql, [userId])
 }
 

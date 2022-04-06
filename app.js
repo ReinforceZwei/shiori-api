@@ -29,6 +29,9 @@ app.use('/user', user)
 var bookmark = require('./router/bookmark')
 app.use('/bookmark', bookmark)
 
+var collection = require('./router/collection')
+app.use('/collection', collection)
+
 // Not found handler
 app.use(function(req, res, next) {
     fail(res, 404, "Not Found")

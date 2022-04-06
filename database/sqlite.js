@@ -32,8 +32,12 @@ class SqliteWrapper extends Warpper {
         return new Promise((resolve, reject) => {
             this._db.all(sql, params, (err, rows) => {
                 if (err){
+                    console.error("Error while executing SQL:", sql, params)
+                    console.error(err)
                     reject(err)
                 }else{
+                    console.log("SQL:", sql, params)
+                    console.log("Result:", rows)
                     resolve(rows)
                 }
             })

@@ -72,6 +72,16 @@ r.patch('/:id', (req, res) => {
     }
 })
 
+r.get('/none/items', (req, res) => {
+    bookmarkCollection.getItemNotInCollection(req.userId)
+        .then(rows => {
+            res.json({'data': rows})
+        })
+        .catch(err => {
+            res.json({'error': err})
+        })
+})
+
 r.get('/:id/items', (req, res) => {
     if (req.params.id){
         bookmarkCollection.getCollectionItem(req.userId, req.params.id)
@@ -84,36 +94,65 @@ r.get('/:id/items', (req, res) => {
     }
 })
 
-r.get('/none/items', (req, res) => {
-    bookmarkCollection.getItemNotInCollection(req.userId)
-        .then(rows => {
-            res.json({'data': rows})
-        })
-        .catch(err => {
-            res.json({'error': err})
-        })
-})
-
 r.post('/:id/add', (req, res) => {
-    if (req.params.id && res.body.bookmark_id) {
+    if (req.params.id && req.body.bookmark_id) {
         // Add bookmark to collection
+        let bookmarkId = req.body.bookmark_id
+        let collectionId = req.params.id
+        bookmarkCollection.addToCollection(req.userId, bookmarkId, collectionId)
+            .then(rows => {
+                res.json({'data':rows})
+            })
+            .catch(err => {
+                res.json({'error': err})
+            })
     }
 })
 
 r.post('/:id/remove', (req, res) => {
-    if (req.params.id && res.body.bookmark_id) {
+    if (req.params.id && req.body.bookmark_id) {
         // Remove bookmark from collection
-    }
-})
-
-r.post('/:id/insert/after', (req, res) => {
-    if (req.body.bookmark_id && req.body.after_bookmark) {
-        // Reorder bookmark
+        let bookmarkId = req.body.bookmark_id
+        let collectionId = req.params.id
+        bookmarkCollection.removeFromCollection(req.userId, bookmarkId)
+            .then(rows => {
+                res.json({'data':rows})
+            })
+            .catch(err => {
+                res.json({'error': err})
+            })
     }
 })
 
 r.post('/none/insert/after', (req, res) => {
-    if (req.body.bookmark_id && req.body.after_bookmark) {
+    if (req.body.hasOwnProperty('bookmark_id') && req.body.hasOwnProperty('after_bookmark')) {
         // Reorder bookmark
+        let bookmarkId = req.body.bookmark_id
+        let afterbookmark = req.body.after_bookmark
+        bookmarkCollection.insertAfter(req.userId, bookmarkId, afterbookmark, undefined)
+            .then(rows => {
+                res.json({'data':rows})
+            })
+            .catch(err => {
+                res.json({'error': err})
+            })
     }
 })
+
+r.post('/:id/insert/after', (req, res) => {
+    if (req.body.hasOwnProperty('bookmark_id') && req.body.hasOwnProperty('after_bookmark')) {
+        // Reorder bookmark
+        let collectionId = req.params.id
+        let bookmarkId = req.body.bookmark_id
+        let afterbookmark = req.body.after_bookmark
+        bookmarkCollection.insertAfter(req.userId, bookmarkId, afterbookmark, collectionId)
+            .then(rows => {
+                res.json({'data':rows})
+            })
+            .catch(err => {
+                res.json({'error': err})
+            })
+    }
+})
+
+module.exports = r

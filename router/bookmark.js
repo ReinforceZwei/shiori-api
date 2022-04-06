@@ -16,11 +16,13 @@ r.post('/create', (req, res) => {
         let url = req.body.url
         bookmark.addBookmark(req.userId, name, url)
             .then(bookmarkId => {
-                res.json({'bookmark_id': bookmarkId})
+                res.json({'bookmark_id': bookmarkId}).end()
             })
             .catch(err => {
                 res.json({'error': err})
             })
+    }else{
+        res.json({"error":"no params"})
     }
 })
 

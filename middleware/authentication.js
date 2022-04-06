@@ -14,6 +14,8 @@ module.exports = (req, res, next) => {
             .catch(err => {
                 fail(res, 401, 'Not authorized')
             })
+        }else{
+            fail(res, 401, 'Not authorized')
         }
     } else {
         fail(res, 401, 'Not authorized')
