@@ -1,6 +1,6 @@
 var db = require('../database/init').getDb()
 
-function addBookmark(userId, name, url){
+function addBookmark(userId, name, url, addDate = undefined){
     // Get max order id
     let maxOrderSql = "SELECT MAX(order_id) as order_id FROM bookmark WHERE user_id = ?"
     return db.query(maxOrderSql, [userId])
@@ -10,7 +10,11 @@ function addBookmark(userId, name, url){
                 maxOrder += rows[0].order_id
             }
             let sql = "INSERT INTO bookmark (user_id, name, url, order_id, add_time) VALUES (?, ?, ?, ?, ?)"
-            return db.query(sql, [userId, name, url, maxOrder, new Date().toISOString()])
+            if (addDate === undefined){
+                return db.query(sql, [userId, name, url, maxOrder, new Date().toISOString()])
+            }else{
+                return db.query(sql, [userId, name, url, maxOrder, addDate])
+            }
         })
         .then(rows => {
             if (rows.insertId){
