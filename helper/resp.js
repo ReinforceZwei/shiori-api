@@ -1,11 +1,11 @@
-function response(statusCode = 200, message = "ok", data = []) {
+function response(statusCode = 200, message = "ok", data = undefined) {
     r = {code: statusCode, msg: message}
-    if (data && data.length) r.data = data
+    if (data) r.data = data
     return r
 }
 
-function ok(res, data = []) {
-    res.json(response(data = data)).status(200)
+function ok(res, data = undefined) {
+    res.json(response(200, "ok", data)).status(200)
 }
 
 function fail(res, code = 400, message = "") {

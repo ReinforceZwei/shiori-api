@@ -26,21 +26,34 @@ function createCollection(userId, name){
 function getCollection(userId, id){
     let sql = "SELECT * FROM collection WHERE user_id = ? AND id = ?"
     return db.query(sql, [userId, id])
+    .then(rows => {
+        if (rows.length === 1){
+            return rows[0]
+        }else{
+            return Promise.reject(404)
+        }
+    })
 }
 
 function listCollection(userId){
-    let sql = "SELECT * FROM collection WHERE user_id = ?"
+    let sql = "SELECT * FROM collection WHERE user_id = ? ORDER BY order_id"
     return db.query(sql, [userId])
 }
 
 function updateCollection(userId, id, name){
-    let sql = "UPDATE collection SET name = ? WHERE user_id = ? AND id = ?"
-    return db.query(sql, [name, userId, id])
+    return getCollection(userId, id)
+    .then(rows => {
+        let sql = "UPDATE collection SET name = ? WHERE user_id = ? AND id = ?"
+        return db.query(sql, [name, userId, id])
+    })
 }
 
 function deleteCollection(userId, id){
-    let sql = "DELETE FROM collection WHERE user_id = ? AND id = ?"
-    return db.query(sql, [userId, id])
+    return getCollection(userId, id)
+    .then(rows => {
+        let sql = "DELETE FROM collection WHERE user_id = ? AND id = ?"
+        return db.query(sql, [userId, id])
+    })
 }
 
 module.exports = {createCollection, getCollection, listCollection, updateCollection, deleteCollection}

@@ -27,6 +27,13 @@ function addBookmark(userId, name, url){
 function getBookmark(userId, id){
     let sql = "SELECT * FROM bookmark WHERE user_id = ? AND id = ?"
     return db.query(sql, [userId, id])
+    .then(rows => {
+        if (rows.length === 1){
+            return rows[0]
+        }else{
+            return Promise.reject(404)
+        }
+    })
 }
 
 function listBookmark(userId){
@@ -35,13 +42,19 @@ function listBookmark(userId){
 }
 
 function deleteBookmark(userId, id){
-    let sql = "DELETE FROM bookmark WHERE user_id = ? AND id = ?"
-    return db.query(sql, [userId, id])
+    return getBookmark(userId, id)
+    .then(rows => {
+        let sql = "DELETE FROM bookmark WHERE user_id = ? AND id = ?"
+        return db.query(sql, [userId, id])
+    })
 }
 
 function updateBookmark(userId, id, name, url){
-    let sql = "UPDATE bookmark SET name = ?, url = ? WHERE user_id = ? AND id = ?"
-    return db.query(sql, [name, url, userId, id])
+    return getBookmark(userId, id)
+    .then(rows => {
+        let sql = "UPDATE bookmark SET name = ?, url = ? WHERE user_id = ? AND id = ?"
+        return db.query(sql, [name, url, userId, id])
+    })
 }
 
 module.exports = {addBookmark, getBookmark, listBookmark, deleteBookmark, updateBookmark}

@@ -13,10 +13,10 @@ r.post('/create', (req, res) => {
         let name = req.body.name
         collection.createCollection(req.userId, name)
             .then(id => {
-                res.json({'collection_id': id})
+                resp.ok(res, {'collection_id': id})
             })
             .catch(err => {
-                res.json({'error': err})
+                resp.fail(res, 500, err)
             })
     }else{
         resp.fail(res, 400, 'Missing parameters')
@@ -26,10 +26,10 @@ r.post('/create', (req, res) => {
 r.get('/list', (req, res) => {
     collection.listCollection(req.userId)
         .then(rows => {
-            res.json({'data': rows})
+            resp.ok(res, {'data': rows})
         })
         .catch(err => {
-            res.json({'error': err})
+            resp.fail(res, 500, err)
         })
 })
 
@@ -37,14 +37,14 @@ r.get('/:id', (req, res) => {
     if (notEmpty(req.params, 'id')){
         collection.getCollection(req.userId, req.params.id)
             .then(rows => {
-                if (rows.length === 1){
-                    res.json({'data': rows[0]})
-                }else{
-                    res.status(404).end()
-                }
+                resp.ok(res, rows)
             })
             .catch(err => {
-                res.json({'error': err})
+                if (err === 404){
+                    resp.fail(res, 404, "Not found")
+                }else{
+                    resp.fail(res, 500, err)
+                }
             })
     }else{
         resp.fail(res, 400, 'Missing parameters')
@@ -56,10 +56,14 @@ r.delete('/:id', (req, res) => {
         let id = req.params.id
         collection.deleteCollection(req.userId, id)
             .then(rows => {
-                res.status(200).end()
+                resp.ok(res)
             })
             .catch(err => {
-                res.json({'error': err})
+                if (err === 404){
+                    resp.fail(res, 404, "Not found")
+                }else{
+                    resp.fail(res, 500, err)
+                }
             })
     }else{
         resp.fail(res, 400, 'Missing parameters')
@@ -72,10 +76,14 @@ r.patch('/:id', (req, res) => {
         let id = req.params.id
         collection.updateCollection(req.userId, id, name)
             .then(rows => {
-                res.status(200).end()
+                resp.ok(res)
             })
             .catch(err => {
-                res.json({'error': err})
+                if (err === 404){
+                    resp.fail(res, 404, "Not found")
+                }else{
+                    resp.fail(res, 500, err)
+                }
             })
     }else{
         resp.fail(res, 400, 'Missing parameters')
@@ -85,10 +93,10 @@ r.patch('/:id', (req, res) => {
 r.get('/none/items', (req, res) => {
     bookmarkCollection.getItemNotInCollection(req.userId)
         .then(rows => {
-            res.json({'data': rows})
+            resp.ok(res, rows)
         })
         .catch(err => {
-            res.json({'error': err})
+            resp.fail(res, 500, err)
         })
 })
 
@@ -96,10 +104,14 @@ r.get('/:id/items', (req, res) => {
     if (notEmpty(req.params, 'id')){
         bookmarkCollection.getCollectionItem(req.userId, req.params.id)
             .then(rows => {
-                res.json({'data': rows})
+                resp.ok(res, rows)
             })
             .catch(err => {
-                res.json({'error': err})
+                if (err === 404){
+                    resp.fail(res, 404, "Not found")
+                }else{
+                    resp.fail(res, 500, err)
+                }
             })
     }else{
         resp.fail(res, 400, 'Missing parameters')
@@ -113,10 +125,14 @@ r.post('/:id/add', (req, res) => {
         let collectionId = req.params.id
         bookmarkCollection.addToCollection(req.userId, bookmarkId, collectionId)
             .then(rows => {
-                res.json({'data':rows})
+                resp.ok(res)
             })
             .catch(err => {
-                res.json({'error': err})
+                if (err === 404){
+                    resp.fail(res, 404, "Not found")
+                }else{
+                    resp.fail(res, 500, err)
+                }
             })
     }else{
         resp.fail(res, 400, 'Missing parameters')
@@ -130,46 +146,79 @@ r.post('/:id/remove', (req, res) => {
         let collectionId = req.params.id
         bookmarkCollection.removeFromCollection(req.userId, bookmarkId)
             .then(rows => {
-                res.json({'data':rows})
+                resp.ok(res)
             })
             .catch(err => {
-                res.json({'error': err})
+                if (err === 404){
+                    resp.fail(res, 404, "Not found")
+                }else{
+                    resp.fail(res, 500, err)
+                }
             })
     }else{
         resp.fail(res, 400, 'Missing parameters')
     }
 })
 
-r.post('/none/insert/after', (req, res) => {
-    if (notEmpty(req.body, 'bookmark_id') && notEmpty(req.body, 'after_bookmark')) {
+r.post('/none/order/:bookmark_id/after/:after_bookmark', (req, res) => {
+    if (notEmpty(req.params, 'bookmark_id') && notEmpty(req.params, 'after_bookmark')) {
         // Reorder bookmark
-        let bookmarkId = req.body.bookmark_id
-        let afterbookmark = req.body.after_bookmark
+        let bookmarkId = Number(req.params.bookmark_id)
+        let afterbookmark = Number(req.params.after_bookmark)
         bookmarkCollection.insertAfter(req.userId, bookmarkId, afterbookmark, undefined)
             .then(rows => {
-                res.json({'data':rows})
+                resp.ok(res)
             })
             .catch(err => {
-                res.json({'error': err})
+                if (err === 404){
+                    resp.fail(res, 404, "Not found")
+                }else{
+                    resp.fail(res, 500, err)
+                }
             })
     }else{
         resp.fail(res, 400, 'Missing parameters')
     }
 })
 
-r.post('/:id/insert/after', (req, res) => {
-    if (notEmpty(req.body, 'bookmark_id') && notEmpty(req.body, 'after_bookmark')) {
+r.post('/:id/order/:bookmark_id/after/:after_bookmark', (req, res) => {
+    if (notEmpty(req.params, 'bookmark_id') && notEmpty(req.params, 'after_bookmark')) {
         // Reorder bookmark
-        let collectionId = req.params.id
-        let bookmarkId = req.body.bookmark_id
-        let afterbookmark = req.body.after_bookmark
+        let collectionId = Number(req.params.id)
+        let bookmarkId = Number(req.params.bookmark_id)
+        let afterbookmark = Number(req.params.after_bookmark)
         bookmarkCollection.insertAfter(req.userId, bookmarkId, afterbookmark, collectionId)
             .then(rows => {
-                res.json({'data':rows})
+                resp.ok(res)
             })
             .catch(err => {
-                res.json({'error': err})
+                if (err === 404){
+                    resp.fail(res, 404, "Not found")
+                }else{
+                    resp.fail(res, 500, err)
+                }
             })
+    }else{
+        resp.fail(res, 400, 'Missing parameters')
+    }
+})
+
+r.post('/order/:id/after/:after_collection', (req, res) => {
+    // Reorder collection
+    if (notEmpty(req.params, 'id') && notEmpty(req.params, 'after_collection')) {
+        let collectionId = Number(req.params.id)
+        let afterCollection = Number(req.params.after_collection)
+        return bookmarkCollection.insertCollection(req.userId, 'after', collectionId, afterCollection)
+        .then(rows => {
+            resp.ok(res)
+        })
+        .catch(err => {
+            if (err === 404){
+                resp.fail(res, 404, "Not found")
+            }else{
+                resp.fail(res, 500, err)
+            }
+        })
     }else{
         resp.fail(res, 400, 'Missing parameters')
     }

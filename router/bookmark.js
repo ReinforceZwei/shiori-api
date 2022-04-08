@@ -43,14 +43,14 @@ r.get('/:id', (req, res) => {
         let id = req.params.id
         bookmark.getBookmark(req.userId, id)
             .then(rows => {
-                if (rows.length === 1){
-                    resp.ok(res, rows[0])
-                }else{
-                    resp.fail(res, 404, 'Not found')
-                }
+                resp.ok(res, rows)
             })
             .catch(err => {
-                resp.fail(res, 500, err)
+                if (err === 404){
+                    resp.fail(res, 404, "Not found")
+                }else{
+                    resp.fail(res, 500, err)
+                }
             })
     }else{
         resp.fail(res, 400, 'Missing parameters')
@@ -65,7 +65,11 @@ r.delete('/:id', (req, res) => {
                 resp.ok(res)
             })
             .catch(err => {
-                resp.fail(res, 500, err)
+                if (err === 404){
+                    resp.fail(res, 404, "Not found")
+                }else{
+                    resp.fail(res, 500, err)
+                }
             })
     }else{
         resp.fail(res, 400, 'Missing parameters')
@@ -82,7 +86,11 @@ r.patch('/:id', (req, res) => {
                 resp.ok(res)
             })
             .catch(err => {
-                resp.fail(res, 500, err)
+                if (err === 404){
+                    resp.fail(res, 404, "Not found")
+                }else{
+                    resp.fail(res, 500, err)
+                }
             })
     }else{
         resp.fail(res, 400, 'Missing parameters')
