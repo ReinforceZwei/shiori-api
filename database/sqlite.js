@@ -1,26 +1,27 @@
 var sqlite3 = require('sqlite3')
 var Warpper = require('./database-wrapper')
 var schema =  require('fs').readFileSync(__dirname + '/../database-schema/sqlite.sql').toString()
+var log = require('../helper/log')
 
 function init(dbFile) {
     let db = new sqlite3.Database(dbFile, (err) => {
         if (err) {
-            console.error("Open db error")
-            console.error(err);
+            log.error("Open db error")
+            log.error(err);
             process.exit()
         }
     });
     db.exec(schema, (err) => {
         if (err) {
-            console.error("Init db error")
-            console.error(err);
+            log.error("Init db error")
+            log.error(err);
             process.exit()
         }
     });
     db.exec('PRAGMA foreign_keys = ON', err => {
         if (err){
-            console.error('Sqlite cannot enable foreign keys')
-            console.error(err);
+            log.error('Sqlite cannot enable foreign keys')
+            log.error(err);
             process.exit()
         }
     })
@@ -32,12 +33,12 @@ class SqliteWrapper extends Warpper {
         return new Promise((resolve, reject) => {
             this._db.all(sql, params, (err, rows) => {
                 if (err){
-                    console.error("Error while executing SQL:", sql, params)
-                    console.error(err)
+                    log.error("Error while executing SQL: " + sql + params)
+                    log.error(err)
                     reject(err)
                 }else{
-                    console.log("SQL:", sql, params)
-                    console.log("Result:", rows)
+                    log.debug("SQL: " + sql + params)
+                    log.debug("Result:", rows)
                     resolve(rows)
                 }
             })

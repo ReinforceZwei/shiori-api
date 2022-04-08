@@ -1,3 +1,5 @@
+// https://gist.github.com/devster31/4e8c6548fd16ffb75c02e6f24e27f9b9
+
 var cheerio = require('cheerio')
 
 function parse(bookmark){

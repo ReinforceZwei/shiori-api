@@ -1,6 +1,7 @@
 var mysql = require('mysql')
 var Warpper = require('./database-wrapper')
 var schema = require('fs').readFileSync(__dirname + '/../database-schema/mysql.sql').toString()
+var log = require('../helper/log')
 
 function init(options){
     if (options.host && options.user && options.password && options.database){
@@ -13,31 +14,31 @@ function init(options){
 
         db.connect(err => {
             if (err){
-                console.log('Cannot connect mysql database')
-                console.error(err);
+                log.error('Cannot connect mysql database')
+                log.error(err);
                 process.exit()
             }
         })
 
         db.query(`CREATE DATABASE IF NOT EXISTS \`${options.database}\``, (err, rows, fields) => {
             if (err){
-                console.log('Fail to create database')
-                console.error(err)
+                log.error('Fail to create database')
+                log.error(err)
                 process.exit()
             }
         })
         db.query(`USE \`${options.database}\``, (err, rows, fields) => {
             if (err){
-                console.log('Fail to use database')
-                console.error(err)
+                log.error('Fail to use database')
+                log.error(err)
                 process.exit()
             }
         })
         let newSchema = schema.replace(/\n/g, '').replace(/\r/g, '')
         db.query(schema, (err, rows, fields) => {
             if (err){
-                console.log('Fail to init table')
-                console.error(err)
+                log.error('Fail to init table')
+                log.error(err)
                 process.exit()
             }
         })
@@ -53,10 +54,12 @@ class MySqlWrapper extends Warpper {
         return new Promise((resolve, reject) => {
             this._db.query(sql, params, (err, rows, fields) => {
                 if (err){
-                    console.error("Error while executing SQL:", sql, params)
-                    console.error(err)
+                    log.error("Error while executing SQL: " + sql + params)
+                    log.error(err)
                     reject(err)
                 }else{
+                    log.debug("SQL: " + sql + params)
+                    log.debug("Result:", rows)
                     resolve(rows)
                 }
             })
