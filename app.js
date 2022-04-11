@@ -35,6 +35,9 @@ app.use('/collection', collection)
 var importBm = require('./router/import')
 app.use('/import', importBm)
 
+var title = require('./router/title')
+app.use('/title', title)
+
 // Not found handler
 app.use(function(req, res, next) {
     fail(res, 404, "Not Found")
