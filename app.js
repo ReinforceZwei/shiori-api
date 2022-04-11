@@ -1,5 +1,6 @@
 var express = require('express');
 var helmet = require('helmet')
+var cors = require('cors')
 var fail = require(__dirname + "/helper/resp").fail
 
 var app = express()
@@ -20,23 +21,34 @@ var db = require('./database/init').init('sqlite', config.sqlite_file)
 //db.run("INSERT INTO user (name, password) VALUES ('admin', 'abc123')");
 //db.all("SELECT * FROM user", (err, rows) => {console.log(rows)})
 
+app.options('*', cors())
+
+var api = express.Router()
+
+var corsOptions = {
+    "methods": "GET,HEAD,PATCH,POST,DELETE"
+}
+api.use(cors(corsOptions))
+
 var index = require('./router/index')
-app.use('/', index)
+api.use('/', index)
 
 var user = require('./router/user')
-app.use('/user', user)
+api.use('/user', user)
 
 var bookmark = require('./router/bookmark')
-app.use('/bookmark', bookmark)
+api.use('/bookmark', bookmark)
 
 var collection = require('./router/collection')
-app.use('/collection', collection)
+api.use('/collection', collection)
 
 var importBm = require('./router/import')
-app.use('/import', importBm)
+api.use('/import', importBm)
 
 var title = require('./router/title')
-app.use('/title', title)
+api.use('/title', title)
+
+app.use('/api', api)
 
 // Not found handler
 app.use(function(req, res, next) {
