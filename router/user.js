@@ -1,7 +1,7 @@
 var express = require('express');
 var r = express.Router();
 var user = require('../controller/user')
-var resp = require(__dirname + "/../helper/resp")
+var resp = require("../helper/resp")
 var notEmpty = require('../helper/haskey').notEmpty
 
 r.post('/login', (req, res) => {

@@ -2,6 +2,7 @@ var express = require('express');
 var r = express.Router();
 var auth = require('../middleware/authentication')
 var importBookmark = require('../controller/import').importBookmark
+var resp = require("../helper/resp")
 var multer  = require('multer')
 var mem = multer.memoryStorage()
 var upload = multer({ storage: mem })
@@ -13,10 +14,13 @@ r.post('/', upload.any(), (req, res) => {
         let bm = req.files[0].buffer.toString()
         importBookmark(req.userId, bm)
         .then(() => {
-            res.status(201).end()
+            res.status(201).json({code: 201, msg: 'ok'})
+        })
+        .catch(err => {
+            resp.fail(res, 500, err)
         })
     }else{
-        res.status(400).end()
+        resp.fail(res, 400, 'Missing file')
     }
 })
 
