@@ -9,11 +9,23 @@ app.use(express.json());       // to support JSON-encoded bodies
 app.use(express.urlencoded()); // to support URL-encoded bodies
 app.set('etag', false);
 
-var config = require('./config/config')({'port': 3001})
+var config = require('./config/config')
 
-console.log(config)
+//console.log(config)
 
-var db = require('./database/init').init('sqlite', config.sqlite_file)
+var db = require('./database/init').init(config.database.type, config.database)
+
+if (process.env.NODE_ENV === 'development') {
+    // For test only. Password is admin
+    db.query("INSERT INTO user VALUES (1, 'admin', '$2b$10$8HZJ4gBIOd1U7Qam8aL5IunSu3Hxs6EM/z9EX6FHWtodK8SClwaK6')")
+    .catch(err => {
+        return Promise.resolve()
+    })
+    .then(() => {
+        return db.query("INSERT INTO session VALUES (1, 1, 'gtcTgMhkMwxsL7e+jiqpI6K39qZFUyOJBy6Sg2QvSjG1yO5lE8gNbawsa5yiDCV6', '2032-04-19T09:10:34.493Z')")
+    })
+    .catch(err => {})
+}
 
 // var auth = require('./middleware/authentication')
 // app.use(auth)

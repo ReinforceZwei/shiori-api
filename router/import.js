@@ -15,8 +15,9 @@ r.post('/', upload.any(), (req, res) => {
         .then(() => {
             res.status(201).end()
         })
+    }else{
+        res.status(400).end()
     }
-    res.status(400).end()
 })
 
 module.exports = r

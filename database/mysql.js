@@ -4,7 +4,7 @@ var schema = require('fs').readFileSync(__dirname + '/../database-schema/mysql.s
 var log = require('../helper/log')
 
 function init(options){
-    if (options.host && options.user && options.password && options.database){
+    if (options.host && options.user && options.dbname){
         let db = mysql.createConnection({
             host     : options.host,
             user     : options.user,
@@ -20,14 +20,14 @@ function init(options){
             }
         })
 
-        db.query(`CREATE DATABASE IF NOT EXISTS \`${options.database}\``, (err, rows, fields) => {
+        db.query(`CREATE DATABASE IF NOT EXISTS \`${options.dbname}\``, (err, rows, fields) => {
             if (err){
                 log.error('Fail to create database')
                 log.error(err)
                 process.exit()
             }
         })
-        db.query(`USE \`${options.database}\``, (err, rows, fields) => {
+        db.query(`USE \`${options.dbname}\``, (err, rows, fields) => {
             if (err){
                 log.error('Fail to use database')
                 log.error(err)

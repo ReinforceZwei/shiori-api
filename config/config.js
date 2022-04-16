@@ -1,11 +1,24 @@
+const dotenv = require('dotenv')
+
+dotenv.config()
+
 var defaultConfig = {
-    "port": 5000,
-    "database": "sqlite",
-    "sqlite_file": "./shiori.db"
+    "port": process.env.PORT,
+    "database": {
+        "type": process.env.DB_TYPE,
+        "host": process.env.MYSQL_HOST,
+        "port": process.env.MYSQL_PORT,
+        "user": process.env.MYSQL_USER,
+        "password": process.env.MYSQL_PASSWORD,
+        "dbname": process.env.MYSQL_DBNAME,
+        "sqlite_file": process.env.SQLITE_FILE
+    }
 }
+
+console.log(defaultConfig)
 
 getConfig = (option) => {
     return Object.assign(defaultConfig, option)
 }
 
-module.exports = getConfig
+module.exports = defaultConfig
