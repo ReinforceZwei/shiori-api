@@ -26,7 +26,7 @@ r.post('/create', (req, res) => {
 r.get('/list', (req, res) => {
     collection.listCollection(req.userId)
         .then(rows => {
-            resp.ok(res, {'data': rows})
+            resp.ok(res, rows)
         })
         .catch(err => {
             resp.fail(res, 500, err)
