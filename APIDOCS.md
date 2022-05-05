@@ -424,7 +424,7 @@ Error
 
 ### GET `/title`
 
-Get the page title (i.e. the `<title>...</title>` tag) of a URL
+Get the page title (i.e. the `<title>...</title>` tag) of a URL. You may use this endpoint to auto-fill bookmark name for user
 
 Parameters (`query`)
 | Name | Type | Description |
@@ -435,6 +435,20 @@ Return `object` with `200`
 | Name | Type | Description |
 | - | - | - |
 | `title` | `string` | Title of the page. Will be an empty string if fail to fetch the title |
+
+### GET `/favicon`
+
+Get the page icon of a URL. You may use this endpoint to auto-fill bookmark icon for user
+
+Parameters (`query`)
+| Name | Type | Description |
+| - | - | - |
+| `url` | `string` | URL to fetch |
+
+Return `object` with `200`
+| Name | Type | Description |
+| - | - | - |
+| `favicon` | `string` | Base64 encoded icon. Will be null if fail to fetch the icon |
 
 ### POST `/import`
 

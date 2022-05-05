@@ -9,15 +9,20 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "cheerio": "^1.0.0-rc.10",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",
     "helmet": "^4.6.0",
+    "ico-to-png": "^0.2.1",
     "multer": "^1.4.4",
     "mysql": "^2.18.1",
+    "request-x-ray": "^0.1.4",
+    "sharp": "^0.30.4",
     "sqlite3": "^5.0.2",
-    "winston": "^3.7.2"
+    "winston": "^3.7.2",
+    "x-ray": "^2.3.4"
   }
 }

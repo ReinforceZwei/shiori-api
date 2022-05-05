@@ -12,7 +12,8 @@ var defaultConfig = {
         "password": process.env.MYSQL_PASSWORD,
         "dbname": process.env.MYSQL_DBNAME,
         "sqlite_file": process.env.SQLITE_FILE
-    }
+    },
+    "favicon_size": Number(process.env.FAVICON_FETCH_SIZE),
 }
 
 console.log(defaultConfig)

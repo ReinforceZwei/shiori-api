@@ -60,6 +60,9 @@ api.use('/import', importBm)
 var title = require('./router/title')
 api.use('/title', title)
 
+var favicon = require('./router/favicon')
+api.use('/favicon', favicon)
+
 app.use('/api', api)
 
 // Not found handler
