@@ -18,6 +18,7 @@ function addBookmark(userId, name, url, addDate = undefined, favicon = undefined
                 queryParams.push(addDate)
             }
 
+            // TODO: Add size check and format validate
             if (favicon === undefined){
                 queryParams.push(null)
             }else{

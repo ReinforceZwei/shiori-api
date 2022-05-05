@@ -4,6 +4,7 @@ var bookmark = require('../controller/bookmark')
 var auth = require('../middleware/authentication')
 var resp = require("../helper/resp")
 var notEmpty = require('../helper/haskey').notEmpty
+var hasKey = require('../helper/haskey').hasKey
 
 r.use(auth)
 
@@ -81,7 +82,7 @@ r.patch('/:id', (req, res) => {
     if (notEmpty(req.params, 'id')){
         let name = notEmpty(req.body, 'name') ? req.body.name : undefined
         let url = notEmpty(req.body, 'url') ? req.body.url : undefined
-        let favicon = notEmpty(req.body, 'favicon') ? req.body.favicon : undefined
+        let favicon = hasKey(req.body, 'favicon') ? req.body.favicon : undefined
         let id = req.params.id
         bookmark.updateBookmark(req.userId, id, name, url, favicon)
             .then(rows => {

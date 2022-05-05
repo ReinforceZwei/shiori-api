@@ -13,6 +13,7 @@ async function importBookmark(userId, bm){
             let name = bm.title
             let url = bm.url
             let addDate = new Date(bm.add_date * 1000).toISOString()
+            let favicon = bm.icon
             let colName = ''
             if (bm.categories.length > 0) {
                 for (let cname of bm.categories){
@@ -22,7 +23,7 @@ async function importBookmark(userId, bm){
                 colName = colName.substring(1)
             }
     
-            let bmId = await bookmark.addBookmark(userId, name, url, addDate)
+            let bmId = await bookmark.addBookmark(userId, name, url, addDate, favicon)
     
             if (colName !== ''){
                 if (!c.has(colName)){

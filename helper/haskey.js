@@ -8,7 +8,7 @@ function hasKey(obj, key) {
 
 function notEmpty(obj, key) {
     if (hasKey(obj, key)) {
-        if (obj[key] === "" || (typeof(obj[key]) == "object" && Object.keys(obj[key]).length === 0)){
+        if (obj[key] === "" || obj[key] === null || (typeof(obj[key]) == "object" && obj[key] !== null && Object.keys(obj[key]).length === 0)){
             return false
         }
         return true
