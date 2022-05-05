@@ -26,6 +26,7 @@ function parse(bookmark){
         let $a = $(a)
         let add_date = $a.attr('add_date')
         let last_modified = $a.attr('last_modified')
+        let icon = $a.attr('icon')
         let description = $a.next('dd').text().split("\n")[0] // ugly but works
         let categories = getCategories($a)
         // add level information
@@ -45,6 +46,7 @@ function parse(bookmark){
             'tags': tags,
             'last_modified': typeof last_modified === "undefined" ? null : last_modified ,
             'add_date': typeof add_date === "undefined" ? null : add_date,
+            'icon': typeof icon === "undefined" ? null : icon,
         }
         jsonbmArray.push(jsonbm)
     })

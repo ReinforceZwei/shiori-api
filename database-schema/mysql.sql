@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `bookmark`(
     `name` TEXT NOT NULL,
     `url` TEXT NOT NULL,
     `add_time` TEXT NOT NULL,
+    `favicon` TEXT,
     FOREIGN KEY(`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS `collection`(

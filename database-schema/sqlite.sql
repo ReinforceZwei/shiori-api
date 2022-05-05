@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS "bookmark" (
     "name" text NOT NULL,
     "url" text NOT NULL,
     "add_time" text NOT NULL,
+    "favicon" text,
     FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
   );
   

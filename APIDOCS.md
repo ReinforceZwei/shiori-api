@@ -104,6 +104,7 @@ Return `object` with `200`
 | `name` | `string` | Bookmark name |
 | `url` | `string` | Bookmark URL |
 | `add_time` | `datetime` | Add time of the bookmark |
+| `favicon` | `string` | Base64 encoded favicon |
 
 Error
 | Code | Description |
@@ -113,7 +114,7 @@ Error
 
 ### PATCH `/bookmark/{id}`
 
-Update information of a bookmark
+Update information of a bookmark. Will update values that are given in the body only
 
 Parameters
 | Name | Type | Description |
@@ -123,8 +124,9 @@ Parameters
 Parameters (`body`)
 | Name | Type | Description |
 | - | - | - |
-| `name` | `string` | New bookmark name |
-| `url` | `string` | New bookmark URL |
+| `name` | `string` | (Optional) New bookmark name |
+| `url` | `string` | (Optional) New bookmark URL |
+| `favicon` | `string` | (Optional) New base64 encoded favicon |
 
 Return `200`
 
@@ -160,6 +162,7 @@ Parameters (`body`)
 | - | - | - |
 | `name` | `string` | Bookmark name |
 | `url` | `string` | Bookmark URL |
+| `favicon` | `string` | (Optional) Base64 encoded favicon |
 
 Return `object` with `200`
 | Name | Type | Description |

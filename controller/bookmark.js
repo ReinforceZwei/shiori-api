@@ -1,6 +1,6 @@
 var db = require('../database/init').getDb()
 
-function addBookmark(userId, name, url, addDate = undefined){
+function addBookmark(userId, name, url, addDate = undefined, favicon = undefined){
     // Get max order id
     let maxOrderSql = "SELECT MAX(order_id) as order_id FROM bookmark WHERE user_id = ?"
     return db.query(maxOrderSql, [userId])
@@ -9,12 +9,21 @@ function addBookmark(userId, name, url, addDate = undefined){
             if (rows.length === 1 && rows[0].order_id !== null){
                 maxOrder += rows[0].order_id
             }
-            let sql = "INSERT INTO bookmark (user_id, name, url, order_id, add_time) VALUES (?, ?, ?, ?, ?)"
+            let sql = "INSERT INTO bookmark (user_id, name, url, order_id, add_time, favicon) VALUES (?, ?, ?, ?, ?, ?)"
+            let queryParams = [userId, name, url, maxOrder]
+
             if (addDate === undefined){
-                return db.query(sql, [userId, name, url, maxOrder, new Date().toISOString()])
+                queryParams.push(new Date().toISOString())
             }else{
-                return db.query(sql, [userId, name, url, maxOrder, addDate])
+                queryParams.push(addDate)
             }
+
+            if (favicon === undefined){
+                queryParams.push(null)
+            }else{
+                queryParams.push(favicon)
+            }
+            return db.query(sql, queryParams)
         })
         .then(rows => {
             if (rows.insertId){
@@ -53,12 +62,31 @@ function deleteBookmark(userId, id){
     })
 }
 
-function updateBookmark(userId, id, name, url){
-    return getBookmark(userId, id)
-    .then(rows => {
-        let sql = "UPDATE bookmark SET name = ?, url = ? WHERE user_id = ? AND id = ?"
-        return db.query(sql, [name, url, userId, id])
-    })
+function updateBookmark(userId, id, name = undefined, url = undefined, favicon = undefined){
+    let params = []
+    let sqlParams = []
+    if (name !== undefined){
+        sqlParams.push('name = ?')
+        params.push(name)
+    }
+    if (url !== undefined){
+        sqlParams.push('url = ?')
+        params.push(url)
+    }
+    if (favicon !== undefined){
+        sqlParams.push('favicon = ?')
+        params.push(favicon)
+    }
+    if (params.length > 0){
+        return getBookmark(userId, id)
+        .then(rows => {
+            let sql = `UPDATE bookmark SET ${sqlParams.join(',')} WHERE user_id = ? AND id = ?`
+            params.push(userId, id)
+            return db.query(sql, params)
+        })
+    }else{
+        return Promise.resolve()
+    }
 }
 
 module.exports = {addBookmark, getBookmark, listBookmark, deleteBookmark, updateBookmark}

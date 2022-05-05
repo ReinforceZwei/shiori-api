@@ -16,7 +16,8 @@ r.post('/create', (req, res) => {
     if (notEmpty(req.body, 'name') && notEmpty(req.body, 'url')){
         let name = req.body.name
         let url = req.body.url
-        bookmark.addBookmark(req.userId, name, url)
+        let favicon = notEmpty(req.body, 'favicon') ? req.body.favicon : undefined
+        bookmark.addBookmark(req.userId, name, url, favicon)
             .then(bookmarkId => {
                 resp.ok(res, {'bookmark_id': bookmarkId})
             })
@@ -77,11 +78,12 @@ r.delete('/:id', (req, res) => {
 })
 
 r.patch('/:id', (req, res) => {
-    if (notEmpty(req.body, 'name') && notEmpty(req.body, 'url') && notEmpty(req.params, 'id')){
-        let name = req.body.name
-        let url = req.body.url
+    if (notEmpty(req.params, 'id')){
+        let name = notEmpty(req.body, 'name') ? req.body.name : undefined
+        let url = notEmpty(req.body, 'url') ? req.body.url : undefined
+        let favicon = notEmpty(req.body, 'favicon') ? req.body.favicon : undefined
         let id = req.params.id
-        bookmark.updateBookmark(req.userId, id, name, url)
+        bookmark.updateBookmark(req.userId, id, name, url, favicon)
             .then(rows => {
                 resp.ok(res)
             })
