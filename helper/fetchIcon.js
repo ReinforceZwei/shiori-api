@@ -1,6 +1,6 @@
-const axios = require('axios').default;
+const _axios = require('axios').default;
 const sharp = require('sharp');
-const icoToPng = require('ico-to-png')
+const icojs = require('icojs')
 const x = require('x-ray')()
 const Url = require('url')
 const makeDriver = require('request-x-ray')
@@ -8,11 +8,17 @@ const makeDriver = require('request-x-ray')
 const options = {
     method: "GET",
     headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36",
         "Accept": "text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8"
     }
 }
 const driver = makeDriver(options)
 x.driver(driver)
+
+// Create custom axios instance
+const axios = _axios.create({
+    headers: options.headers
+})
 
 const config = {
     selectors: [
@@ -22,7 +28,7 @@ const config = {
         'link[rel=icon][href]',
         'meta[name=msapplication-TileImage][content]',
         'meta[name=twitter\\:image][content]',
-        'meta[property=og\\:image][content]'
+        //'meta[property=og\\:image][content]'
     ],
   
     predicates: [
@@ -49,7 +55,7 @@ const config = {
  * Fetch the icon of a website
  * @param {string} urlString URL to fetch
  * @param {number} size Resize icon (.ico will not be resized)
- * @returns {Promise<Buffer>} Promise resolve to Buffer (image format could be `png` or `ico`)
+ * @returns {Promise<Buffer>} Promise resolve to png image Buffer
  */
 function fetchIcon(urlString, size = 16){
     if (!urlString.startsWith('http')) {
@@ -58,22 +64,34 @@ function fetchIcon(urlString, size = 16){
     }
     let u = new URL(urlString);
 
+    // FIXME: This promise chain looks hell
     return getFaviconUrl(urlString).then(data => {
         if (!data.startsWith('http') && data.startsWith('/')){
             // Deal with url with path only (host missing)
+            // FIXME: URL host might be changed due to redirection
+            //        but currently has no way to get redirected url
             data = 'http://' + u.host + data
         }
         return axios.get(data, {responseType: 'arraybuffer'}).then(r => {
             let buf = Buffer.from(r.data);
             // Skip resize for .ico library not supported
-            if (mimeToExt(r.headers['content-type']) === ".ico"){
-                return icoToPng(buf, size)
-            }else{
-                return sharp(buf)
-                    .resize(size)
-                    .png()
-                    .toBuffer()
-            }
+            return Promise.resolve(mimeToExt(r.headers['content-type']) === ".ico")
+                .then(isIco => {
+                    if (isIco){
+                        return icojs.parse(buf)
+                            .then(images => {
+                                return Buffer.from(images[0].buffer)
+                            })
+                    }else{
+                        return buf
+                    }
+                })
+                .then(pngBuf => {
+                    return sharp(pngBuf)
+                        .resize(size)
+                        .png()
+                        .toBuffer()
+                })
         })
     })
 }
