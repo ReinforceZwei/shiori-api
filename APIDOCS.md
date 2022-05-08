@@ -359,7 +359,7 @@ Return `array` with `200`
 
 ---
 
-### POST `/collection/{id}/order/{bookmark_id}/after/{after_bookmark}`
+### POST `/collection/{id}/order/{bookmark_id}/{position}/{target_pos_id}`
 
 Reorder a bookmark in the collection
 
@@ -370,7 +370,8 @@ Parameters
 | - | - | - |
 | `id` | `number` | Collection ID |
 | `bookmark_id` | `number` | Bookmark ID to be moved |
-| `after_bookmark` | `number` | Move bookmark to position after this bookmark |
+| `position` | `string` | Where to put the moving bookmark. Must be `before` or `after` |
+| `target_pos_id` | `number` | Move bookmark to position before/after this bookmark ID |
 
 Return `200`
 
@@ -380,7 +381,7 @@ Error
 | `400` | Missing parameters |
 | `404` | Not found |
 
-### POST `/collection/none/order/{bookmark_id}/after/{after_bookmark}`
+### POST `/collection/none/order/{bookmark_id}/{position}/{target_pos_id}`
 
 Reorder a bookmark that is not in any collections
 
@@ -390,7 +391,8 @@ Parameters
 | Name | Type | Description |
 | - | - | - |
 | `bookmark_id` | `number` | Bookmark ID to be moved |
-| `after_bookmark` | `number` | Move bookmark to position after this bookmark |
+| `position` | `string` | Where to put the moving bookmark. Must be `before` or `after` |
+| `target_pos_id` | `number` | Move bookmark to position before/after this bookmark ID |
 
 Return `200`
 
@@ -400,7 +402,7 @@ Error
 | `400` | Missing parameters |
 | `404` | Not found |
 
-### POST `/collection/order/{id}/after/{after_collection}`
+### POST `/collection/order/{id}/{position}/{target_pos_id}`
 
 Reorder a collection
 
@@ -410,7 +412,8 @@ Parameters
 | Name | Type | Description |
 | - | - | - |
 | `id` | `number` | Collection ID to be moved |
-| `after_collection` | `number` | Move collection to position after this collection |
+| `position` | `string` | Where to put the moving bookmark. Must be `before` or `after` |
+| `target_pos_id` | `number` | Move collection to position before/after this coolection ID |
 
 Return `200`
 
@@ -420,7 +423,7 @@ Error
 | `400` | Missing parameters |
 | `404` | Not found |
 
-## Other route
+## Utils routes
 
 ### GET `/title`
 

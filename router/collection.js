@@ -160,55 +160,85 @@ r.post('/:id/remove', (req, res) => {
     }
 })
 
-r.post('/none/order/:bookmark_id/after/:after_bookmark', (req, res) => {
-    if (notEmpty(req.params, 'bookmark_id') && notEmpty(req.params, 'after_bookmark')) {
+r.post('/none/order/:bookmark_id/:position/:after_bookmark', (req, res) => {
+    if (notEmpty(req.params, 'bookmark_id') && notEmpty(req.params, 'after_bookmark') && notEmpty(req.params, 'position')) {
         // Reorder bookmark
         let bookmarkId = Number(req.params.bookmark_id)
         let afterbookmark = Number(req.params.after_bookmark)
-        bookmarkCollection.insertAfter(req.userId, bookmarkId, afterbookmark, undefined)
-            .then(rows => {
-                resp.ok(res)
-            })
-            .catch(err => {
-                if (err === 404){
-                    resp.fail(res, 404, "Not found")
-                }else{
-                    resp.fail(res, 500, err)
-                }
-            })
+        let position = req.params.position
+        Promise.resolve(position)
+        .then(pos => {
+            if (pos === "after"){
+                return bookmarkCollection.insertAfter(req.userId, bookmarkId, afterbookmark, undefined)
+            }else if (pos === "before"){
+                return bookmarkCollection.insertBefore(req.userId, bookmarkId, afterbookmark, undefined)
+            }else{
+                return Promise.reject(404)
+            }
+        })
+        .then(rows => {
+            resp.ok(res)
+        })
+        .catch(err => {
+            if (err === 404){
+                resp.fail(res, 404, "Not found")
+            }else{
+                resp.fail(res, 500, err)
+            }
+        })
     }else{
         resp.fail(res, 400, 'Missing parameters')
     }
 })
 
-r.post('/:id/order/:bookmark_id/after/:after_bookmark', (req, res) => {
-    if (notEmpty(req.params, 'bookmark_id') && notEmpty(req.params, 'after_bookmark')) {
+r.post('/:id/order/:bookmark_id/:position/:after_bookmark', (req, res) => {
+    if (notEmpty(req.params, 'bookmark_id') && notEmpty(req.params, 'after_bookmark') && notEmpty(req.params, 'position')) {
         // Reorder bookmark
         let collectionId = Number(req.params.id)
         let bookmarkId = Number(req.params.bookmark_id)
         let afterbookmark = Number(req.params.after_bookmark)
-        bookmarkCollection.insertAfter(req.userId, bookmarkId, afterbookmark, collectionId)
-            .then(rows => {
-                resp.ok(res)
-            })
-            .catch(err => {
-                if (err === 404){
-                    resp.fail(res, 404, "Not found")
-                }else{
-                    resp.fail(res, 500, err)
-                }
-            })
+        let position = req.params.position
+        Promise.resolve(position)
+        .then(pos => {
+            if (pos === "after"){
+                return bookmarkCollection.insertAfter(req.userId, bookmarkId, afterbookmark, collectionId)
+            }else if (pos === "before"){
+                return bookmarkCollection.insertBefore(req.userId, bookmarkId, afterbookmark, collectionId)
+            }else{
+                return Promise.reject(404)
+            }
+        })
+        .then(rows => {
+            resp.ok(res)
+        })
+        .catch(err => {
+            if (err === 404){
+                resp.fail(res, 404, "Not found")
+            }else{
+                resp.fail(res, 500, err)
+            }
+        })
     }else{
         resp.fail(res, 400, 'Missing parameters')
     }
 })
 
-r.post('/order/:id/after/:after_collection', (req, res) => {
+r.post('/order/:id/:position/:after_collection', (req, res) => {
     // Reorder collection
-    if (notEmpty(req.params, 'id') && notEmpty(req.params, 'after_collection')) {
+    if (notEmpty(req.params, 'id') && notEmpty(req.params, 'after_collection') && notEmpty(req.params, 'position')) {
         let collectionId = Number(req.params.id)
         let afterCollection = Number(req.params.after_collection)
-        return bookmarkCollection.insertCollection(req.userId, 'after', collectionId, afterCollection)
+        let position = req.params.position
+        Promise.resolve(position)
+        .then(pos => {
+            if (pos === "after"){
+                return bookmarkCollection.insertCollection(req.userId, 'after', collectionId, afterCollection)
+            }else if (pos === "before"){
+                return bookmarkCollection.insertCollection(req.userId, 'before', collectionId, afterCollection)
+            }else{
+                return Promise.reject(404)
+            }
+        })
         .then(rows => {
             resp.ok(res)
         })
