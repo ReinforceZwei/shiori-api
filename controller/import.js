@@ -22,16 +22,17 @@ async function importBookmark(userId, bm){
                 // Remove leading /
                 colName = colName.substring(1)
             }
-    
-            let bmId = await bookmark.addBookmark(userId, name, url, addDate, favicon)
-    
+            
+            let colId = undefined
             if (colName !== ''){
                 if (!c.has(colName)){
-                    let colId = await collection.createCollection(userId, colName)
+                    colId = await collection.createCollection(userId, colName)
                     c.set(colName, colId)
+                }else{
+                    colId = c.get(colName)
                 }
-                await bookmarkCollection.addToCollection(userId, bmId, c.get(colName))
             }
+            await bookmark.addBookmark(userId, name, url, addDate, favicon, colId)
         }
         await db.query('COMMIT')
     }catch (e){

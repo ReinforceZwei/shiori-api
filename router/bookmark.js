@@ -18,7 +18,8 @@ r.post('/create', (req, res) => {
         let name = req.body.name
         let url = req.body.url
         let favicon = notEmpty(req.body, 'favicon') ? req.body.favicon : undefined
-        bookmark.addBookmark(req.userId, name, url, favicon)
+        let collectionId = notEmpty(req.body, 'collection_id') ? req.body.collection_id : undefined
+        bookmark.addBookmark(req.userId, name, url, undefined, favicon, collectionId)
             .then(bookmarkId => {
                 resp.ok(res, {'bookmark_id': bookmarkId})
             })
@@ -83,8 +84,9 @@ r.patch('/:id', (req, res) => {
         let name = notEmpty(req.body, 'name') ? req.body.name : undefined
         let url = notEmpty(req.body, 'url') ? req.body.url : undefined
         let favicon = hasKey(req.body, 'favicon') ? req.body.favicon : undefined
+        let collectionId = hasKey(req.body, 'collection_id') ? req.body.collection_id : undefined
         let id = req.params.id
-        bookmark.updateBookmark(req.userId, id, name, url, favicon)
+        bookmark.updateBookmark(req.userId, id, name, url, favicon, collectionId)
             .then(rows => {
                 resp.ok(res)
             })

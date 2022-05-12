@@ -104,7 +104,8 @@ Return `object` with `200`
 | `name` | `string` | Bookmark name |
 | `url` | `string` | Bookmark URL |
 | `add_time` | `datetime` | Add time of the bookmark |
-| `favicon` | `string` | Base64 encoded favicon |
+| `favicon` | `string` or `null` | Base64 encoded favicon |
+| `collection_id` | `number` or `null` | Which collection this bookmark is in. `null` mean not in any collection |
 
 Error
 | Code | Description |
@@ -126,7 +127,8 @@ Parameters (`body`)
 | - | - | - |
 | `name` | `string` | (Optional) New bookmark name |
 | `url` | `string` | (Optional) New bookmark URL |
-| `favicon` | `string` | (Optional) New base64 encoded favicon |
+| `favicon` | `string` | (Optional) New base64 encoded favicon. Use `null` to remove icon |
+| `collection_id` | `number` | (Optional) Move to new collection. Use `null` to remove from any collection |
 
 Return `200`
 
@@ -163,6 +165,7 @@ Parameters (`body`)
 | `name` | `string` | Bookmark name |
 | `url` | `string` | Bookmark URL |
 | `favicon` | `string` | (Optional) Base64 encoded favicon |
+| `collection_id` | `number` | (Optional) Which collection the bookmark should be added to. Default is not in any collection |
 
 Return `object` with `200`
 | Name | Type | Description |
@@ -187,6 +190,8 @@ Return `array` with `200`
 | `name` | `string` | Bookmark name |
 | `url` | `string` | Bookmark URL |
 | `add_time` | `datetime` | Add time of the bookmark |
+| `favicon` | `string` or `null` | Base64 encoded favicon |
+| `collection_id` | `number` or `null` | Which collection this bookmark is in. `null` mean not in any collection |
 
 ## Collection
 
@@ -280,28 +285,6 @@ Return `array` with `200`
 
 ---
 
-### POST `/collection/{id}/add`
-
-Move a bookmark into collection
-
-Parameters
-| Name | Type | Description |
-| - | - | - |
-| `id` | `number` | Collection ID |
-
-Parameters (`body`)
-| Name | Type | Description |
-| - | - | - |
-| `bookmark_id` | `number` | Bookmark ID to be moved |
-
-Return `200`
-
-Error
-| Code | Description |
-| - | - |
-| `400` | Missing parameters |
-| `404` | Not found |
-
 ### GET `/collection/{id}/items`
 
 Get all bookmarks in a collection
@@ -326,22 +309,6 @@ Error
 | - | - |
 | `400` | Missing parameters |
 | `404` | Not found |
-
-### POST `/collection/{id}/remove`
-
-Remove a bookmark from collection
-
-Parameters
-| Name | Type | Description |
-| - | - | - |
-| `id` | `number` | Collection ID |
-
-Parameters (`body`)
-| Name | Type | Description |
-| - | - | - |
-| `bookmark_id` | `number` | Bookmark ID to be removed |
-
-Return `200`
 
 ### GET `/collection/none/items`
 

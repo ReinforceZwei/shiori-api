@@ -118,47 +118,50 @@ r.get('/:id/items', (req, res) => {
     }
 })
 
-r.post('/:id/add', (req, res) => {
-    if (notEmpty(req.params, 'id') && notEmpty(req.body, 'bookmark_id')) {
-        // Add bookmark to collection
-        let bookmarkId = req.body.bookmark_id
-        let collectionId = req.params.id
-        bookmarkCollection.addToCollection(req.userId, bookmarkId, collectionId)
-            .then(rows => {
-                resp.ok(res)
-            })
-            .catch(err => {
-                if (err === 404){
-                    resp.fail(res, 404, "Not found")
-                }else{
-                    resp.fail(res, 500, err)
-                }
-            })
-    }else{
-        resp.fail(res, 400, 'Missing parameters')
-    }
-})
+// Deleted function after DB optimize
+// Function migrated to bookmark PATCH route
+//
+// r.post('/:id/add', (req, res) => {
+//     if (notEmpty(req.params, 'id') && notEmpty(req.body, 'bookmark_id')) {
+//         // Add bookmark to collection
+//         let bookmarkId = req.body.bookmark_id
+//         let collectionId = req.params.id
+//         bookmarkCollection.addToCollection(req.userId, bookmarkId, collectionId)
+//             .then(rows => {
+//                 resp.ok(res)
+//             })
+//             .catch(err => {
+//                 if (err === 404){
+//                     resp.fail(res, 404, "Not found")
+//                 }else{
+//                     resp.fail(res, 500, err)
+//                 }
+//             })
+//     }else{
+//         resp.fail(res, 400, 'Missing parameters')
+//     }
+// })
 
-r.post('/:id/remove', (req, res) => {
-    if (notEmpty(req.params, 'id') && notEmpty(req.body, 'bookmark_id')) {
-        // Remove bookmark from collection
-        let bookmarkId = req.body.bookmark_id
-        let collectionId = req.params.id
-        bookmarkCollection.removeFromCollection(req.userId, bookmarkId)
-            .then(rows => {
-                resp.ok(res)
-            })
-            .catch(err => {
-                if (err === 404){
-                    resp.fail(res, 404, "Not found")
-                }else{
-                    resp.fail(res, 500, err)
-                }
-            })
-    }else{
-        resp.fail(res, 400, 'Missing parameters')
-    }
-})
+// r.post('/:id/remove', (req, res) => {
+//     if (notEmpty(req.params, 'id') && notEmpty(req.body, 'bookmark_id')) {
+//         // Remove bookmark from collection
+//         let bookmarkId = req.body.bookmark_id
+//         let collectionId = req.params.id
+//         bookmarkCollection.removeFromCollection(req.userId, bookmarkId)
+//             .then(rows => {
+//                 resp.ok(res)
+//             })
+//             .catch(err => {
+//                 if (err === 404){
+//                     resp.fail(res, 404, "Not found")
+//                 }else{
+//                     resp.fail(res, 500, err)
+//                 }
+//             })
+//     }else{
+//         resp.fail(res, 400, 'Missing parameters')
+//     }
+// })
 
 r.post('/none/order/:bookmark_id/:position/:after_bookmark', (req, res) => {
     if (notEmpty(req.params, 'bookmark_id') && notEmpty(req.params, 'after_bookmark') && notEmpty(req.params, 'position')) {

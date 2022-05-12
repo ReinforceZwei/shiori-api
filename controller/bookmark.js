@@ -1,6 +1,6 @@
 var db = require('../database/init').getDb()
 
-function addBookmark(userId, name, url, addDate = undefined, favicon = undefined){
+function addBookmark(userId, name, url, addDate = undefined, favicon = undefined, collectionId = undefined){
     // Get max order id
     let maxOrderSql = "SELECT MAX(order_id) as order_id FROM bookmark WHERE user_id = ?"
     return db.query(maxOrderSql, [userId])
@@ -9,7 +9,7 @@ function addBookmark(userId, name, url, addDate = undefined, favicon = undefined
             if (rows.length === 1 && rows[0].order_id !== null){
                 maxOrder += rows[0].order_id
             }
-            let sql = "INSERT INTO bookmark (user_id, name, url, order_id, add_time, favicon) VALUES (?, ?, ?, ?, ?, ?)"
+            let sql = "INSERT INTO bookmark (user_id, name, url, order_id, add_time, favicon, collection_id) VALUES (?, ?, ?, ?, ?, ?, ?)"
             let queryParams = [userId, name, url, maxOrder]
 
             if (addDate === undefined){
@@ -23,6 +23,12 @@ function addBookmark(userId, name, url, addDate = undefined, favicon = undefined
                 queryParams.push(null)
             }else{
                 queryParams.push(favicon)
+            }
+
+            if (collectionId === undefined){
+                queryParams.push(null)
+            }else{
+                queryParams.push(collectionId)
             }
             return db.query(sql, queryParams)
         })
@@ -63,7 +69,7 @@ function deleteBookmark(userId, id){
     })
 }
 
-function updateBookmark(userId, id, name = undefined, url = undefined, favicon = undefined){
+function updateBookmark(userId, id, name = undefined, url = undefined, favicon = undefined, collectionId = undefined){
     let params = []
     let sqlParams = []
     if (name !== undefined){
@@ -77,6 +83,10 @@ function updateBookmark(userId, id, name = undefined, url = undefined, favicon =
     if (favicon !== undefined){
         sqlParams.push('favicon = ?')
         params.push(favicon)
+    }
+    if (collectionId !== undefined){
+        sqlParams.push('collection_id = ?')
+        params.push(collectionId)
     }
     if (params.length > 0){
         return getBookmark(userId, id)

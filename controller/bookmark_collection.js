@@ -2,32 +2,35 @@ var db = require('../database/init').getDb()
 var collection = require('../controller/collection')
 var bookmark = require('../controller/bookmark')
 
-function addToCollection(userId, bookmarkId, collectionId){
-    return collection.getCollection(userId, collectionId)
-    .then(rows => {
-        let sql = "INSERT INTO bookmark_collection (user_id, bookmark_id, collection_id) VALUES (?, ?, ?)"
-        return db.query(sql, [userId, bookmarkId, collectionId])
-    })
-}
+// Deleted function after DB optimize
+// Function migrated to bookmark update function
+//
+// function addToCollection(userId, bookmarkId, collectionId){
+//     return collection.getCollection(userId, collectionId)
+//     .then(rows => {
+//         let sql = "INSERT INTO bookmark_collection (user_id, bookmark_id, collection_id) VALUES (?, ?, ?)"
+//         return db.query(sql, [userId, bookmarkId, collectionId])
+//     })
+// }
 
-function removeFromCollection(userId, bookmarkId){
-    return bookmark.getBookmark(userId, bookmarkId)
-    .then(rows => {
-        let sql = "DELETE FROM bookmark_collection WHERE user_id = ? AND bookmark_id = ?"
-        return db.query(sql, [userId, bookmarkId])
-    })
-}
+// function removeFromCollection(userId, bookmarkId){
+//     return bookmark.getBookmark(userId, bookmarkId)
+//     .then(rows => {
+//         let sql = "DELETE FROM bookmark_collection WHERE user_id = ? AND bookmark_id = ?"
+//         return db.query(sql, [userId, bookmarkId])
+//     })
+// }
 
 function getCollectionItem(userId, collectionId){
     return collection.getCollection(userId, collectionId)
     .then(rows => {
-        let sql = 'SELECT bm.* FROM bookmark_collection as bc JOIN bookmark as bm ON bc.bookmark_id = bm.id WHERE bc.user_id = ? AND bc.collection_id = ? ORDER BY order_id'
+        let sql = 'SELECT * FROM bookmark WHERE user_id = ? AND collection_id = ? ORDER BY order_id'
         return db.query(sql, [userId, collectionId])
     })
 }
 
 function getItemNotInCollection(userId){
-    let sql = 'SELECT * FROM bookmark WHERE NOT EXISTS (SELECT * FROM bookmark_collection WHERE bookmark_collection.bookmark_id = bookmark.id) AND user_id = ? ORDER BY order_id'
+    let sql = 'SELECT * FROM bookmark WHERE user_id = ? AND collection_id IS NULL ORDER BY order_id'
     return db.query(sql, [userId])
 }
 
@@ -168,4 +171,4 @@ function insertCollection(userId, position, collectionId, afterId){
     })
 }
 
-module.exports = {addToCollection, removeFromCollection, getCollectionItem, insertAfter, insertBefore, getItemNotInCollection, insertCollection}
+module.exports = {getCollectionItem, insertAfter, insertBefore, getItemNotInCollection, insertCollection}
