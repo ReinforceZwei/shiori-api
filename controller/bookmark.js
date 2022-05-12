@@ -72,6 +72,7 @@ function deleteBookmark(userId, id){
 function updateBookmark(userId, id, name = undefined, url = undefined, favicon = undefined, collectionId = undefined){
     let params = []
     let sqlParams = []
+    let colChanged = false
     if (name !== undefined){
         sqlParams.push('name = ?')
         params.push(name)
@@ -87,10 +88,20 @@ function updateBookmark(userId, id, name = undefined, url = undefined, favicon =
     if (collectionId !== undefined){
         sqlParams.push('collection_id = ?')
         params.push(collectionId)
+        colChanged = true
     }
     if (params.length > 0){
         return getBookmark(userId, id)
         .then(rows => {
+            if (colChanged){
+                return _getMaxOrder(userId, id, collectionId === null ? undefined : collectionId)
+            }
+        })
+        .then(order => {
+            if (colChanged){
+                sqlParams.push('order_id = ?')
+                params.push(order + 10)
+            }
             let sql = `UPDATE bookmark SET ${sqlParams.join(',')} WHERE user_id = ? AND id = ?`
             params.push(userId, id)
             return db.query(sql, params)
@@ -98,6 +109,26 @@ function updateBookmark(userId, id, name = undefined, url = undefined, favicon =
     }else{
         return Promise.resolve()
     }
+}
+
+function _getMaxOrder(userId, bookmarkId, collectionId){
+    return Promise.resolve(collectionId)
+    .then(colId => {
+        if (colId !== undefined){
+            let sql = 'SELECT MAX(order_id) as order_id FROM bookmark WHERE user_id = ? AND collection_id = ?'
+            return db.query(sql, [userId, colId])
+        }else{
+            let sql = 'SELECT MAX(order_id) as order_id FROM bookmark WHERE user_id = ? AND collection_id IS NULL'
+            return db.query(sql, [userId])
+        }
+    })
+    .then(rows => {
+        if (rows.length === 1){
+            return rows[0].order_id
+        }else{
+            return Promise.reject()
+        }
+    })
 }
 
 module.exports = {addBookmark, getBookmark, listBookmark, deleteBookmark, updateBookmark}

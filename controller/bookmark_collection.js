@@ -34,6 +34,38 @@ function getItemNotInCollection(userId){
     return db.query(sql, [userId])
 }
 
+function insertAtEnd(userId, bookmarkId, collectionId){
+    return _getMaxOrder(userId, bookmarkId, collectionId)
+    .then(order => {
+        let maxOrder = order + 10
+        let sql = 'UPDATE bookmark SET order_id = ? WHERE user_id = ? AND id = ?'
+        return db.query(sql, [maxOrder, userId, bookmarkId])
+    })
+    .catch(err => {
+        return Promise.reject(404)
+    })
+}
+
+function _getMaxOrder(userId, bookmarkId, collectionId){
+    return Promise.resolve(collectionId)
+    .then(colId => {
+        if (colId !== undefined){
+            let sql = 'SELECT MAX(order_id) as order_id FROM bookmark WHERE user_id = ? AND collection_id = ?'
+            return db.query(sql, [userId, colId])
+        }else{
+            let sql = 'SELECT MAX(order_id) as order_id FROM bookmark WHERE user_id = ? AND collection_id IS NULL'
+            return db.query(sql, [userId])
+        }
+    })
+    .then(rows => {
+        if (rows.length === 1){
+            return rows[0].order_id
+        }else{
+            return Promise.reject()
+        }
+    })
+}
+
 function insertAfter(userId, bookmarkId, afterId, collectionId){
     return insert('after', userId, bookmarkId, afterId, collectionId)
 }
@@ -171,4 +203,4 @@ function insertCollection(userId, position, collectionId, afterId){
     })
 }
 
-module.exports = {getCollectionItem, insertAfter, insertBefore, getItemNotInCollection, insertCollection}
+module.exports = {getCollectionItem, insertAfter, insertBefore, getItemNotInCollection, insertCollection, insertAtEnd, _getMaxOrder}
