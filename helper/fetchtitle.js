@@ -16,7 +16,8 @@ function fetchTitle(url) {
     }
     return fetch(url, {
         headers: {
-            "Accept": "text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8"
+            "Accept": "text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36",
         }
     })
         .then(res => res.text()) // parse response's body as text
