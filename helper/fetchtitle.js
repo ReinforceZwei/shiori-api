@@ -9,6 +9,10 @@ const parseTitle = (body) => {
 }
 
 function fetchTitle(url) {
+    if (!url.startsWith('http')) {
+        // URL class require 'http'
+        url = 'http://' + url;
+    }
     return fetch(url, {
         headers: {
             "Accept": "text/html, application/xhtml+xml, application/xml;q=0.9, */*;q=0.8"
