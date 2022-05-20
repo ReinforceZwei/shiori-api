@@ -1,11 +1,12 @@
 const fetch = require('node-fetch')
 const log = require('../helper/log')
+const he = require('he');
 
 const parseTitle = (body) => {
     let match = body.match(/<title.*>([^<]*)<\/title>/) // regular expression to parse contents of the <title> tag
     if (!match || typeof match[1] !== 'string')
         throw new Error('Unable to parse the title tag')
-    return match[1]
+    return he.decode(match[1])
 }
 
 function fetchTitle(url) {
